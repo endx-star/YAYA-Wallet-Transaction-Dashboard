@@ -271,6 +271,27 @@ This is computed in the UI using the account you input in the search bar header 
 
 ---
 
+## 🕵️‍♂️ Hiding Sensitive Query Parameters (Frontend Security)
+
+**Feature:** Sensitive query parameters (such as `account`, `q` for search, and pagination state) are no longer exposed in the browser URL. Instead, these values are managed entirely in React state and passed as props between components.
+
+**How it works:**
+
+- The dashboard no longer uses `useSearchParams` or URL query parameters for account, search, or pagination state.
+- All such state is managed in React (`useState`) and passed to components like `SearchBar` and `Pagination`.
+- As a result, sensitive information is not visible in the browser address bar, browser history, or shared URLs.
+- This approach improves privacy and reduces the risk of leaking user/account data via URLs.
+
+**Implementation summary:**
+
+- `page.tsx` manages all filter and navigation state in React.
+- `SearchBar` and `Pagination` receive state and setter functions as props.
+- No sensitive data is ever reflected in the URL.
+
+**Note:** This is a frontend privacy feature. For true security, always validate permissions and sensitive data on the backend as well.
+
+---
+
 ## 🛡️ Security notes
 
 - Secrets live only in `backend/.env`.

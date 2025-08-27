@@ -50,7 +50,6 @@ export async function fetchTransactions(params: {
   const res = await fetch(`${API_BASE}/api/transactions?${usp.toString()}`, {
     cache: "no-store",
   });
-  console.log(res);
   if (!res.ok) {
     throw new Error(`Failed to fetch transactions: ${res.status}`);
   }
