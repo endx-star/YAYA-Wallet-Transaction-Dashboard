@@ -66,7 +66,7 @@ A secure, mobile‑first dashboard that lists transactions for a given account u
 
 ---
 
-## 🏗️ Monorepo structure
+## 🏗️ Repo structure
 
 ```
 yayawallet-dashboard/
@@ -113,6 +113,10 @@ yayawallet-dashboard/
 
 ## 🚀 Getting started
 
+```bash
+git clone https://github.com/endx-star/YAYA-Wallet-Transaction-Dashboard.git
+```
+
 ### 1) Backend (NestJS)
 
 ```bash
@@ -146,7 +150,7 @@ Ensure CORS in backend allows your frontend origin.
 
 ```
 # Required
-YAYA_BASE_URL=https://sandbox.yayawallet.com
+YAYA_BASE_URL=YOUR_API_BASE_URL
 YAYA_API_KEY=key-test_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 YAYA_API_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
@@ -183,7 +187,7 @@ Query params:
 
 Create environment variables:
 
-- `YAYA_BASE_URL` → `https://sandbox.yayawallet.com`
+- `YAYA_BASE_URL` → `YOUR_API_BASE_URL`
 - `YAYA_API_KEY` → your key
 - `YAYA_API_SECRET` → your secret
 
@@ -279,4 +283,4 @@ This is computed in the UI using the account you input in the search bar header 
 
 ## 📝 Licensing & Attribution
 
-This sample is for demonstration and assessment.
+This is a sample work for demonstration and assessment purpose.
