@@ -9,7 +9,18 @@ export default function RootLayout({
       <head>
         <link
           rel="icon"
-          href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%2310b981'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-size='14' fill='white' font-family='Arial' font-weight='bold'%3EY%3C/text%3E%3C/svg%3E"
+          href={`data:image/svg+xml,${encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+      <defs>
+        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#7B4397;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#1E90FF;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <circle cx="16" cy="16" r="16" fill="url(#grad)" />
+      <text x="16" y="21" text-anchor="middle" font-size="14" fill="white" font-family="Arial" font-weight="bold">YY</text>
+    </svg>
+  `)}`}
         />
         <title>YaYa Wallet — Transactions</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />

@@ -7,27 +7,43 @@ import {
   ArrowUpCircleIcon,
 } from "@heroicons/react/24/solid";
 
-export default function TransactionTable({ items }: { items: Transaction[] }) {
-  // Calculate summary
-  const totalIncoming = items
-    .filter((t) => t.direction === "incoming")
-    .reduce((sum, t) => sum + t.amount, 0);
-  const totalOutgoing = items
-    .filter((t) => t.direction === "outgoing")
-    .reduce((sum, t) => sum + t.amount, 0);
-  const balance = totalIncoming - totalOutgoing;
+type TransactionTableProps = {
+  items: Transaction[];
+  summary?: {
+    totalIncoming: number;
+    totalOutgoing: number;
+    balance: number;
+  };
+};
+
+export default function TransactionTable({
+  items,
+  summary,
+}: TransactionTableProps) {
+  // Use summary if provided, else fallback to items calculation (for safety)
+  const totalIncoming =
+    summary?.totalIncoming ??
+    items
+      .filter((t) => t.direction === "incoming")
+      .reduce((sum, t) => sum + t.amount, 0);
+  const totalOutgoing =
+    summary?.totalOutgoing ??
+    items
+      .filter((t) => t.direction === "outgoing")
+      .reduce((sum, t) => sum + t.amount, 0);
+  const balance = summary?.balance ?? totalIncoming - totalOutgoing;
 
   return (
     <div className="mt-4">
       {/* Summary Card */}
-      <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {/* <div className="rounded-2xl bg-gradient-to-r from-emerald-100 to-blue-100 p-4 shadow flex flex-col items-center">
+      <div className="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="rounded-2xl bg-gradient-to-r from-emerald-100 to-blue-100 p-4 shadow flex flex-col items-center">
           <div className="text-gray-500 text-xs">Balance</div>
           <div className="text-2xl font-bold text-gray-800">
             {format.amount(balance, "ETB")} ETB
           </div>
-        </div> */}
-        {/* <div className="rounded-2xl bg-green-50 p-4 shadow flex flex-col items-center">
+        </div>
+        <div className="rounded-2xl bg-green-50 p-4 shadow flex flex-col items-center">
           <div className="flex items-center gap-1 text-green-600 text-xs font-semibold">
             <ArrowDownCircleIcon className="w-5 h-5" /> Incoming
           </div>
@@ -42,7 +58,7 @@ export default function TransactionTable({ items }: { items: Transaction[] }) {
           <div className="text-lg font-bold text-red-700">
             -{format.amount(totalOutgoing, "ETB")} ETB
           </div>
-        </div> */}
+        </div>
       </div>
       {/* Mobile Cards */}
       <div className="block sm:hidden space-y-3">
@@ -107,17 +123,17 @@ export default function TransactionTable({ items }: { items: Transaction[] }) {
       <div className="hidden sm:block">
         <div className="overflow-x-auto rounded-2xl border shadow-md bg-white">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gradient-to-r from-emerald-50 to-blue-50 sticky top-0 z-10">
+            <thead className="bg-purple-500 sticky top-0 z-10">
               <tr>
-                <th className="px-3 py-3 text-left table-header">
+                <th className="px-3 py-3 text-left text-white">
                   Transaction ID
                 </th>
-                <th className="px-3 py-3 text-left table-header">Sender</th>
-                <th className="px-3 py-3 text-left table-header">Receiver</th>
-                <th className="px-3 py-3 text-left table-header">Amount</th>
-                <th className="px-3 py-3 text-left table-header">Currency</th>
-                <th className="px-3 py-3 text-left table-header">Cause</th>
-                <th className="px-3 py-3 text-left table-header">Created At</th>
+                <th className="px-3 py-3 text-left text-white">Sender</th>
+                <th className="px-3 py-3 text-left text-white">Receiver</th>
+                <th className="px-3 py-3 text-left text-white">Amount</th>
+                <th className="px-3 py-3 text-left text-white">Currency</th>
+                <th className="px-3 py-3 text-left text-white">Cause</th>
+                <th className="px-3 py-3 text-left text-white">Created At</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">

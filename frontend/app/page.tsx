@@ -2,8 +2,8 @@
 
 import useSWR from "swr";
 import { useSearchParams, useRouter } from "next/navigation";
-import { fetchTransactions } from "@/lib/api";
-import { ApiResponse } from "@/lib/types";
+import { fetchTransactions, fetchAllTransactions } from "@/lib/api";
+import { ApiResponse, Transaction } from "@/lib/types";
 import SearchBar from "./components/SearchBar";
 import Pagination from "./components/Pagination";
 import TransactionTable from "./components/TransactionTable";
@@ -26,15 +26,21 @@ export default function Page() {
   const q = params.get("q") || "";
   const accountVal = params.get("account") || "";
 
-  // Use an array as the SWR key and an inline fetcher
   const { data, isLoading, error } = useSWR<ApiResponse>(
     ["transactions", pageNum, q, accountVal],
     () => fetchTransactions({ p: pageNum, q, account: accountVal })
   );
-  console.log({ p: pageNum, q, account: accountVal }, data);
+  // Fetch all transactions for summary stats (when account or q changes)
+  const { data: allTx } = useSWR<Transaction[]>(
+    ["all-transactions", accountVal, q],
+    () => fetchAllTransactions({ account: accountVal, q }),
+    { revalidateOnFocus: false }
+  );
   return (
     <main>
-      <h1 className="mb-4 text-2xl font-semibold">Transactions Dashboard</h1>
+      <h1 className="mb-4 text-2xl font-semibold">
+        YaYa Wallet Transactions Dashboard
+      </h1>
       <SearchBar />
       {isLoading && <div className="mt-6 text-gray-600">Loading...</div>}
       {error && <div className="mt-6 text-red-600">Failed to load data</div>}
@@ -45,7 +51,28 @@ export default function Page() {
       ) : (
         data && (
           <>
-            <TransactionTable items={data.data} />
+            <TransactionTable
+              items={data.data}
+              summary={
+                allTx
+                  ? {
+                      totalIncoming: allTx
+                        .filter((t) => t.direction === "incoming")
+                        .reduce((sum, t) => sum + t.amount, 0),
+                      totalOutgoing: allTx
+                        .filter((t) => t.direction === "outgoing")
+                        .reduce((sum, t) => sum + t.amount, 0),
+                      balance:
+                        allTx
+                          .filter((t) => t.direction === "incoming")
+                          .reduce((sum, t) => sum + t.amount, 0) -
+                        allTx
+                          .filter((t) => t.direction === "outgoing")
+                          .reduce((sum, t) => sum + t.amount, 0),
+                    }
+                  : undefined
+              }
+            />
             <Pagination page={data.page} totalPages={data.totalPages} />
           </>
         )

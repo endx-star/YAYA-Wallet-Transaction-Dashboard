@@ -9,27 +9,22 @@ export class TransactionsController {
   @Get()
   async getTransactions(@Query() query: QueryDto) {
     try {
-      const { p = 1, q, account } = query;
+      const { p = 1, q, account, all } = query as any;
       const pageSize = 10;
-      const maxPagesToFetch = 3; // fetch up to 30 transactions for performance
+      const maxPagesToFetch = all ? 20 : 3; // fetch more if all=true (up to 200)
       let allData: any[] = [];
-      // Fetch up to 10 pages from the YaYa API
       for (let i = 1; i <= maxPagesToFetch; i++) {
         const data = await this.service.listOrSearch(i, q);
         if (Array.isArray(data?.data)) {
           allData = allData.concat(data.data);
-          // If less than pageSize returned, stop early
           if (data.data.length < pageSize) break;
         } else {
           break;
         }
       }
 
-      // Shape the response and mark direction on the fly (if account provided)
       const current = (account || "").trim();
-
       let list = (allData || []).map((t: any) => {
-        // Flatten sender/receiver if they are objects
         const sender =
           typeof t.sender === "object" && t.sender
             ? t.sender.account
@@ -43,7 +38,6 @@ export class TransactionsController {
           isTopUp || (current && receiver === current)
             ? "incoming"
             : "outgoing";
-        // Convert created_at_time (timestamp) to ISO string if present
         let createdAt = t.createdAt ?? t.created_at ?? t.timestamp ?? "";
         if (!createdAt && t.created_at_time) {
           createdAt = new Date(t.created_at_time * 1000).toISOString();
@@ -60,14 +54,21 @@ export class TransactionsController {
         };
       });
 
-      // Filter: only include transactions where current user is sender or receiver
       if (current) {
         list = list.filter(
           (t: any) => t.sender === current || t.receiver === current
         );
       }
 
-      // Always return a maximum of 10 transactions per page
+      if (all) {
+        // Return all transactions for summary stats
+        return {
+          total: list.length,
+          data: list,
+        };
+      }
+
+      // Paginated response for table
       const startIdx = ((p as number) - 1) * pageSize;
       const pagedList = list.slice(startIdx, startIdx + pageSize);
       const total = list.length;
@@ -80,7 +81,6 @@ export class TransactionsController {
         data: pagedList,
       };
     } catch (err) {
-      // Log error to console for debugging
       console.error("Error in getTransactions:", err);
       throw err;
     }

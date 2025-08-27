@@ -122,7 +122,7 @@ git clone https://github.com/endx-star/YAYA-Wallet-Transaction-Dashboard.git
 ```bash
 cd backend
 cp .env.example .env
-# edit .env with your keys
+# Edit .env with your YaYa Wallet API keys
 npm install
 npm run start:dev
 ```
@@ -132,7 +132,7 @@ npm run start:dev
 ```bash
 cd frontend
 cp .env.local.example .env.local
-# edit NEXT_PUBLIC_API_BASE_URL if backend runs on a different host/port
+# Edit NEXT_PUBLIC_API_BASE_URL if backend runs on a different host/port
 npm install
 npm run dev
 ```
@@ -140,7 +140,23 @@ npm run dev
 - Backend default: `http://localhost:4000`
 - Frontend default: `http://localhost:3000`
 
-Ensure CORS in backend allows your frontend origin.
+> **CORS:** Make sure the backend allows your frontend origin in `.env` (`ALLOWED_ORIGIN`).
+
+---
+
+## 🖥️ How the Dashboard Works (User Experience)
+
+- On first page load, the dashboard will automatically display transactions for the **signed-in user account** (from the `account` query parameter in the URL). If no account is present, it defaults to `yayawalletpi` (or your configured default).
+- The account badge at the top shows which account's transactions are being displayed.
+- The search bar lets you filter transactions by sender, receiver, cause, or transaction ID. As you type, results update automatically.
+- Pagination is handled via the `p` query parameter. Only 10 transactions are shown per page.
+- If no transactions are found for your search, you'll see a friendly "No transaction found" message.
+
+**Assumptions:**
+
+- On first page load, the dashboard uses the signed-in user's account (if available) or falls back to a default account. This ensures users always see relevant transactions immediately.
+
+---
 
 ---
 
