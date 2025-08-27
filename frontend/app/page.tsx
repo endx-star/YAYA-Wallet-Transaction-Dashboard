@@ -45,9 +45,7 @@ export default function Page() {
       {isLoading && <div className="mt-6 text-gray-600">Loading...</div>}
       {error && (
         <div className="mt-6 text-red-600 text-center text-lg font-semibold">
-          Sorry, we couldn't load your transactions.
-          <br />
-          Please check your connection or try again later.
+          Failed to load transactions data
         </div>
       )}
       {data && data.data.length === 0 ? (

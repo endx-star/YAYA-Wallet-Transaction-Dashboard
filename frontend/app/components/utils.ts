@@ -1,5 +1,4 @@
 export const format = {
-  // Format amount as a plain number (no currency prefix)
   amount: (n: number, _ccy: string) => {
     try {
       return n.toLocaleString(undefined, {

@@ -3,6 +3,7 @@ import { AppModule } from "./app.module";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import { ValidationPipe } from "@nestjs/common";
+import { Logger } from "@nestjs/common";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: false });
@@ -36,7 +37,6 @@ async function bootstrap() {
 
   const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
   await app.listen(port);
-  // eslint-disable-next-line no-console
-  console.log(`Backend listening on http://localhost:${port}`);
+  Logger.log(`Backend listening on http://localhost:${port}`);
 }
 bootstrap();

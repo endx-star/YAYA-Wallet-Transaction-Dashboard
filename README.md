@@ -40,7 +40,7 @@ A secure, mobile‑first dashboard that lists transactions for a given account u
      - `search(query, page)` → POST `/api/en/transaction/search` with `{ query }`
    - `TransactionsController` exposes our simplified endpoints:
      - `GET /api/transactions?p=1&q=...` → search when `q` present, else list
-   - Normalize the response shape and add `direction` (incoming/outgoing) when the caller provides `account`.
+   - Normalize the response shape and add `direction` (incoming/outgoing) when the caller provides `account` or I provide a defualt account on the page loads at first see it more in ## 🖥️ How the Dashboard Works (User Experience) section.
 
 4. **Design UI (frontend)**
 
@@ -138,7 +138,7 @@ npm run dev
 ```
 
 - Backend default: `http://localhost:4000`
-- Frontend default: `http://localhost:3000`
+- Frontend default: `http://localhost:3001`
 
 > **CORS:** Make sure the backend allows your frontend origin in `.env` (`ALLOWED_ORIGIN`).
 
@@ -166,13 +166,13 @@ npm run dev
 
 ```
 # Required
-YAYA_BASE_URL=YOUR_API_BASE_URL
+YAYA_BASE_URL=YAYA_API_BASE_URL
 YAYA_API_KEY=key-test_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 YAYA_API_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 # Optional
 PORT=4000
-ALLOWED_ORIGIN=http://localhost:3000
+ALLOWED_ORIGIN=http://localhost:3001
 ```
 
 **frontend/.env.local**
@@ -182,13 +182,11 @@ ALLOWED_ORIGIN=http://localhost:3000
 NEXT_PUBLIC_API_BASE_URL=http://localhost:4000
 ```
 
-> ❗️Never put the API key/secret in the frontend. They must stay server-side.
-
 ---
 
 ## 🧪 Testing with Postman
 
-### Option A — via our Backend (no signing needed)
+### Option A — via Backend (no signing needed)
 
 1. Set `{{BACKEND}}` collection variable to `http://localhost:4000`.
 2. Request: `GET {{BACKEND}}/api/transactions?p=1&q=abebe&account=acct_123`
@@ -258,8 +256,6 @@ Examples:
 - **Search (POST)**  
   `POST {{YAYA_BASE_URL}}/api/en/transaction/search` with raw JSON `{ "query": "abebe" }`
 
-> If you see a 401 signature error, verify your timestamp is close to server time (±5s).
-
 ---
 
 ## 🧭 How direction is computed
@@ -288,17 +284,15 @@ This is computed in the UI using the account you input in the search bar header 
 - `SearchBar` and `Pagination` receive state and setter functions as props.
 - No sensitive data is ever reflected in the URL.
 
-**Note:** This is a frontend privacy feature. For true security, always validate permissions and sensitive data on the backend as well.
-
 ---
 
-## 🛡️ Security notes
+## 🔒 Security: Authentication Keys & Data Protection (Summary)
 
-- Secrets live only in `backend/.env`.
-- The backend **never** returns secrets to clients.
-- Helmet for security headers; rate limiting protects endpoints; strict CORS.
-- Avoid logging full requests/responses to/from YaYa (could contain PII). Redact if necessary.
-- Always use HTTPS in production (reverse proxy like Nginx or a PaaS).
+- API keys and secrets are stored only in backend `.env` files, never in frontend code or configs.
+- Frontend never sees or sends secrets; all sensitive requests are proxied through the backend.
+- Backend uses Helmet, rate limiting, and strict CORS for protection.
+- Sensitive data is not exposed in URLs, logs, or browser history.
+- All input is validated and sanitized on the backend.
 
 ---
 
