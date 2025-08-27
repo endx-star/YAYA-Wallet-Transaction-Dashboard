@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-white text-gray-900;
+}
+
+.table-header {
+  @apply text-xs font-semibold uppercase tracking-wider text-gray-600;
+}
+
+.badge {
+  @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium;
+}
+.badge-incoming { @apply bg-green-100 text-green-800; }
+.badge-outgoing { @apply bg-red-100 text-red-800; }
