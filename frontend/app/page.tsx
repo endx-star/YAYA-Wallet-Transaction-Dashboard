@@ -1,7 +1,7 @@
 "use client";
 
 import useSWR from "swr";
-import { useSearchParams, useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
 import { fetchTransactions, fetchAllTransactions } from "@/lib/api";
 import { ApiResponse, Transaction } from "@/lib/types";
 import SearchBar from "./components/SearchBar";
@@ -9,39 +9,39 @@ import Pagination from "./components/Pagination";
 import TransactionTable from "./components/TransactionTable";
 
 export default function Page() {
-  const params = useSearchParams();
-  const router = useRouter();
-  // Set default params on first load if missing
-  const p = params.get("p");
-  const account = params.get("account");
-  // Only run on client
-  if (typeof window !== "undefined" && (!p || !account)) {
-    const usp = new URLSearchParams(Array.from(params.entries()));
-    if (!p) usp.set("p", "1");
-    if (!account) usp.set("account", "yayawalletpi");
-    window.location.replace(`/?${usp.toString()}`);
-    return null;
-  }
-  const pageNum = Number(params.get("p") || "1");
-  const q = params.get("q") || "";
-  const accountVal = params.get("account") || "";
+  // State for account, search query, and page
+  const [account, setAccount] = useState<string>("yayawalletpi");
+  const [q, setQ] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
 
+  // Fetch paginated transactions
   const { data, isLoading, error } = useSWR<ApiResponse>(
-    ["transactions", pageNum, q, accountVal],
-    () => fetchTransactions({ p: pageNum, q, account: accountVal })
+    ["transactions", page, q, account],
+    () => fetchTransactions({ p: page, q, account })
   );
-  // Fetch all transactions for summary stats (when account or q changes)
+  // Fetch all transactions for summary stats
   const { data: allTx } = useSWR<Transaction[]>(
-    ["all-transactions", accountVal, q],
-    () => fetchAllTransactions({ account: accountVal, q }),
+    ["all-transactions", account, q],
+    () => fetchAllTransactions({ account, q }),
     { revalidateOnFocus: false }
   );
+
+  // Handlers for pagination
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  // When account or q changes, reset to page 1
+  useEffect(() => {
+    setPage(1);
+  }, [account, q]);
+
   return (
     <main>
       <h1 className="mb-4 text-2xl font-semibold">
         YaYa Wallet Transactions Dashboard
       </h1>
-      <SearchBar />
+      <SearchBar account={account} setAccount={setAccount} q={q} setQ={setQ} />
       {isLoading && <div className="mt-6 text-gray-600">Loading...</div>}
       {error && <div className="mt-6 text-red-600">Failed to load data</div>}
       {data && data.data.length === 0 ? (
@@ -73,7 +73,11 @@ export default function Page() {
                   : undefined
               }
             />
-            <Pagination page={data.page} totalPages={data.totalPages} />
+            <Pagination
+              page={data.page}
+              totalPages={data.totalPages}
+              onPageChange={handlePageChange}
+            />
           </>
         )
       )}

@@ -1,32 +1,30 @@
-import React, { useState, useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 import { useDebounce } from "use-debounce";
 
+type SearchBarProps = {
+  account: string;
+  setAccount: (val: string) => void;
+  q: string;
+  setQ: (val: string) => void;
+};
+
 export default function SearchBar({
-  account: propAccount,
-}: { account?: string } = {}) {
-  const params = useSearchParams();
-  const router = useRouter();
-  const account = propAccount ?? params.get("account") ?? "";
-  const [input, setInput] = useState(params.get("q") || "");
+  account,
+  setAccount,
+  q,
+  setQ,
+}: SearchBarProps) {
+  const [input, setInput] = React.useState(q);
   const [debouncedInput] = useDebounce(input, 500);
 
-  // Keep input in sync with URL (for back/forward navigation)
+  // Keep input in sync with q prop
   useEffect(() => {
-    setInput(params.get("q") || "");
-    // eslint-disable-next-line
-  }, [params]);
+    setInput(q);
+  }, [q]);
 
-  // Update URL when debounced input changes
+  // Update parent q when debounced input changes
   useEffect(() => {
-    const usp = new URLSearchParams(Array.from(params.entries()));
-    if (debouncedInput) {
-      usp.set("q", debouncedInput);
-    } else {
-      usp.delete("q");
-    }
-    usp.set("p", "1"); // Reset to first page on new search
-    router.replace(`/?${usp.toString()}`);
+    setQ(debouncedInput);
     // eslint-disable-next-line
   }, [debouncedInput]);
 
