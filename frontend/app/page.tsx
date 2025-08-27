@@ -43,7 +43,13 @@ export default function Page() {
       </h1>
       <SearchBar account={account} setAccount={setAccount} q={q} setQ={setQ} />
       {isLoading && <div className="mt-6 text-gray-600">Loading...</div>}
-      {error && <div className="mt-6 text-red-600">Failed to load data</div>}
+      {error && (
+        <div className="mt-6 text-red-600 text-center text-lg font-semibold">
+          Sorry, we couldn't load your transactions.
+          <br />
+          Please check your connection or try again later.
+        </div>
+      )}
       {data && data.data.length === 0 ? (
         <div className="mt-8 text-center text-gray-500 text-lg font-medium">
           No transaction found

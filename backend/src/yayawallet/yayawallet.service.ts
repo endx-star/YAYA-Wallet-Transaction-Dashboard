@@ -16,7 +16,7 @@ export class YaYaWalletService {
     this.apiSecret = process.env.YAYA_API_SECRET || "";
     this.client = axios.create({
       baseURL: this.baseUrl,
-      timeout: 10_000,
+      timeout: 30000,
       headers: {
         "Content-Type": "application/json",
       },
